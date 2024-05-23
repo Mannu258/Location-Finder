@@ -7,21 +7,27 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///project.db"
 db = SQLAlchemy(app)
 
+
 class Location(db.Model):
     ID = db.Column(db.Integer,primary_key=True)
     location = db.Column(db.String(200),nullable=False)
+    ipAddress = db.Column(db.String(200),nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
 
 @app.route("/", methods=['GET'])
 def index():
     if request.method == "GET":
         latitude = request.args.get('lat', type=float)
         longitude = request.args.get('lon', type=float)
+        ip = request.args.get('ip', type=str)
+        new_ip = f"{ip}"
         new_location = f"{latitude},{longitude}"
-        location = Location(location = new_location)
+        location = Location(location = new_location,ipAddress=new_ip)
         db.session.add(location)
         db.session.commit()
     return render_template('index.html')
+
 @app.route("/secretadmin", methods=['GET'])
 def details():
     location = Location.query.order_by(Location.ID.desc()).all()
