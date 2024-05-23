@@ -1,6 +1,6 @@
 from flask import Flask,render_template,request,redirect
 import datetime
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
@@ -12,7 +12,9 @@ class Location(db.Model):
     ID = db.Column(db.Integer,primary_key=True)
     location = db.Column(db.String(200),nullable=False)
     ipAddress = db.Column(db.String(200),nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    def get_ist_now():
+        return datetime.utcnow() + timedelta(hours=5, minutes=30)
+    created_at = db.Column(db.DateTime, default=get_ist_now)
 
 
 @app.route("/", methods=['GET'])
